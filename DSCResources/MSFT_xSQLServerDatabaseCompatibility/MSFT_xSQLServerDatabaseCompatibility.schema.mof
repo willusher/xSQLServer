@@ -1,0 +1,8 @@
+[ClassVersion("1.0.0.0"), FriendlyName("xSQLServerDatabaseCompatibility")]
+class MSFT_xSQLServerDatabaseCompatibility : OMI_BaseResource
+{
+    [Key, Description("The SQL database.")] String Database;
+    [Required, Description("The compatibility level for the database.")] String Compatibility;
+    [Write, Description("The SQL Server for the database.")] String SQLServer;
+    [Write, Description("The SQL instance for the database.")] String SQLInstanceName;
+};
