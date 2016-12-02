@@ -22,6 +22,13 @@ function Get-TargetResource
         [System.String]
         $Name,
 
+        [Microsoft.Management.Infrastructure.CimInstance[]]
+        $Files,
+
+        [ValidateSet('None', 'Partial')]
+        [System.String]
+        $Containment = 'None',
+
         [Parameter(Mandatory)]
         [System.String]
         $SQLServer = $env:COMPUTERNAME,
@@ -41,7 +48,7 @@ function Get-TargetResource
         Write-Verbose 'Getting SQL Databases'
         # Check database exists
         $sqlDatabase = $sql.Databases
-        
+
         if ($sqlDatabase)
         {
             if ($sqlDatabase[$Name])
@@ -61,7 +68,7 @@ function Get-TargetResource
             $Ensure = 'Absent'
         }
     }
-    
+
     $returnValue = @{
         Name = $Name
         Ensure = $Ensure
@@ -85,6 +92,13 @@ function Set-TargetResource
         [System.String]
         $Name,
 
+        [ValidateSet('None', 'Partial')]
+        [System.String]
+        $Containment,
+
+        [Microsoft.Management.Infrastructure.CimInstance[]]
+        $Files,
+
         [Parameter(Mandatory)]
         [System.String]
         $SQLServer = $env:COMPUTERNAME,
@@ -103,7 +117,7 @@ function Set-TargetResource
     {
         if ($Ensure -eq "Present")
         {
-            New-SqlDatabase -SQL $sql -Name $Name
+            New-SqlDatabase -SQL $sql -Name $Name -Containment $Containment -Files $Files
             New-VerboseMessage -Message "Created Database $Name"
         }
         else
@@ -128,6 +142,13 @@ function Test-TargetResource
         [System.String]
         $Name,
 
+        [ValidateSet('None', 'Partial')]
+        [System.String]
+        $Containment,
+
+        [Microsoft.Management.Infrastructure.CimInstance[]]
+        $Files,
+
         [Parameter(Mandatory)]
         [System.String]
         $SQLServer = $env:COMPUTERNAME,
@@ -135,14 +156,13 @@ function Test-TargetResource
         [Parameter(Mandatory)]
         [System.String]
         $SQLInstanceName = 'MSSQLSERVER'
-    )    
+    )
 
     $sqlDatabase = Get-TargetResource @PSBoundParameters
 
     $result = ($sqlDatabase.Ensure -eq $Ensure)
-    
+
     $result
 }
 
 Export-ModuleMember -Function *-TargetResource
-
